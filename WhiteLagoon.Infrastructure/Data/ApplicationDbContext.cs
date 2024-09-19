@@ -13,5 +13,7 @@ namespace WhiteLagoon.Infrastructure.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
+
+        public DbSet<Villa> Villas { get; set; }
     }
 }
