@@ -20,13 +20,17 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var villa in Model)
+        @foreach (var Villa in Model)
         {
             <tr>
-                <td>@villa.Name</td>
-                <td>@villa.Price</td>
-                <td>@villa.Sqft</td>
-                <td>@villa.Occupancy</td>
+                <td>@Villa.Name</td>
+                <td>@Villa.Price</td>
+                <td>@Villa.Sqft</td>
+                <td>@Villa.Occupancy</td>
+                <td>
+                    <a asp-controller="Villa" asp-action="Update" asp-route-id="@Villa.Id" class="btn btn-primary">Edit</a>
+                    <a asp-controller="Villa" asp-action="Delete" asp-route-id="@Villa.Id" class="btn btn-danger">Delete</a>
+                </td>
             </tr>
         }
     </tbody>

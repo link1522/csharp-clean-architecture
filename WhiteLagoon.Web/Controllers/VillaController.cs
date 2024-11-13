@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using WhiteLagoon.Domain.Entities;
 using WhiteLagoon.Infrastructure.Data;
 
@@ -13,9 +14,9 @@ namespace WhiteLagoon.Web.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var villas = _context.Villas.ToList();
+            var villas = await _context.Villas.ToListAsync();
             return View(villas);
         }
 
@@ -26,7 +27,7 @@ namespace WhiteLagoon.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Villa obj)
+        public async Task<IActionResult> Create(Villa obj)
         {
             if (obj.Name == obj.Description)
             {
@@ -35,8 +36,35 @@ namespace WhiteLagoon.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                _context.Villas.Add(obj);
-                _context.SaveChanges();
+                await _context.Villas.AddAsync(obj);
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Index");
+            }
+
+            return View(obj);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Update(int id)
+        {
+            Villa? obj = await _context.Villas.FindAsync(id);
+
+            if (obj == null)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+
+            return View(obj);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Update(Villa obj)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Villas.Update(obj);
+                await _context.SaveChangesAsync();
 
                 return RedirectToAction("Index");
             }
