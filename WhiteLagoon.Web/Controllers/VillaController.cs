@@ -50,7 +50,7 @@ namespace WhiteLagoon.Web.Controllers
         {
             Villa? obj = await _context.Villas.FindAsync(id);
 
-            if (obj == null)
+            if (obj is null)
             {
                 return RedirectToAction("Error", "Home");
             }
@@ -70,6 +70,33 @@ namespace WhiteLagoon.Web.Controllers
             }
 
             return View(obj);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            Villa? obj = await _context.Villas.FindAsync(id);
+
+            if (obj is null)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+
+            return View(obj);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(Villa obj)
+        {
+            var objFromDb = await _context.Villas.FindAsync(obj.Id);
+
+            if (objFromDb is not null)
+            {
+                _context.Villas.Remove(objFromDb);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction("Index");
         }
     }
 }
