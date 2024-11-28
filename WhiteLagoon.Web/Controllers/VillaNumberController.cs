@@ -27,16 +27,11 @@ namespace WhiteLagoon.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Villa obj)
+        public async Task<IActionResult> Create(VillaNumber obj)
         {
-            if (obj.Name == obj.Description)
-            {
-                ModelState.AddModelError("Description", "The description cannot exactly match the Name.");
-            }
-
             if (ModelState.IsValid)
             {
-                await _context.Villas.AddAsync(obj);
+                await _context.VillaNumbers.AddAsync(obj);
                 await _context.SaveChangesAsync();
                 TempData["success"] = "Villa has been created successfully";
 
