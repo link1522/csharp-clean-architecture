@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WhiteLagoon.Domain.Entities;
 using WhiteLagoon.Infrastructure.Data;
+using WhiteLagoon.Web.ViewModels;
 
 namespace WhiteLagoon.Web.Controllers
 {
@@ -26,23 +27,25 @@ namespace WhiteLagoon.Web.Controllers
         public async Task<IActionResult> Create()
         {
             var villas = await _context.Villas.ToListAsync();
-            IEnumerable<SelectListItem> list = villas.Select(villa => new SelectListItem
+
+            var model = new VillaNumberVM
             {
-                Text = villa.Name,
-                Value = villa.Id.ToString()
-            });
+                VillaList = villas.Select(villa => new SelectListItem
+                {
+                    Text = villa.Name,
+                    Value = villa.Id.ToString()
+                })
+            };
 
-            ViewData["VillaList"] = list;
-
-            return View();
+            return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(VillaNumber obj)
+        public async Task<IActionResult> Create(VillaNumberVM obj)
         {
             if (ModelState.IsValid)
             {
-                await _context.VillaNumbers.AddAsync(obj);
+                await _context.VillaNumbers.AddAsync(obj.VillaNumber);
                 await _context.SaveChangesAsync();
                 TempData["success"] = "Villa has been created successfully";
 
