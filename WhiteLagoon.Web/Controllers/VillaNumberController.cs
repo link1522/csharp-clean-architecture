@@ -18,8 +18,7 @@ namespace WhiteLagoon.Web.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var villaNumbers = await _context.VillaNumbers.ToListAsync();
-
+            var villaNumbers = await _context.VillaNumbers.Include(u => u.Villa).ToListAsync();
             return View(villaNumbers);
         }
 

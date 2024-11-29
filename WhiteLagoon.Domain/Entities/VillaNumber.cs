@@ -10,7 +10,7 @@ namespace WhiteLagoon.Domain.Entities
         [Display(Name = "Villa Number")]
         public int Villa_Number { get; set; }
 
-        [ForeignKey("Valla")]
+        [ForeignKey("Villa")]
         [Display(Name = "Villa Id")]
         public int VillaId { get; set; }
 
