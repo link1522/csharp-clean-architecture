@@ -71,16 +71,24 @@ namespace WhiteLagoon.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Update(int id)
+        public async Task<IActionResult> Update(int villaNumberId)
         {
-            Villa? obj = await _context.Villas.FindAsync(id);
+            var villas = await _context.Villas.ToListAsync();
+            var model = new VillaNumberVM
+            {
+                VillaList = villas.Select(villa => new SelectListItem
+                {
+                    Text = villa.Name,
+                    Value = villa.Id.ToString()
+                }),
+                VillaNumber = await _context.VillaNumbers.FirstOrDefaultAsync(u => u.Villa_Number == villaNumberId)
+            };
 
-            if (obj is null)
+            if (model.VillaNumber is null)
             {
                 return RedirectToAction("Error", "Home");
             }
-
-            return View(obj);
+            return View(model);
         }
 
         [HttpPost]
