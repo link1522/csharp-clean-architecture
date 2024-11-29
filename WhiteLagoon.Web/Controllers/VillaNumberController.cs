@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WhiteLagoon.Domain.Entities;
 using WhiteLagoon.Infrastructure.Data;
@@ -17,12 +18,22 @@ namespace WhiteLagoon.Web.Controllers
         public async Task<IActionResult> Index()
         {
             var villaNumbers = await _context.VillaNumbers.ToListAsync();
+
             return View(villaNumbers);
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var villas = await _context.Villas.ToListAsync();
+            IEnumerable<SelectListItem> list = villas.Select(villa => new SelectListItem
+            {
+                Text = villa.Name,
+                Value = villa.Id.ToString()
+            });
+
+            ViewData["VillaList"] = list;
+
             return View();
         }
 
