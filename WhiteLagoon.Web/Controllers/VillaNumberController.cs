@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using WhiteLagoon.Domain.Entities;
 using WhiteLagoon.Infrastructure.Data;
 using WhiteLagoon.Web.ViewModels;
 
@@ -40,14 +39,14 @@ namespace WhiteLagoon.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(VillaNumberVM obj)
+        public async Task<IActionResult> Create(VillaNumberVM villaNumberVM)
         {
-            bool roomNumberExists = _context.VillaNumbers.Any(v => v.Villa_Number == obj.VillaNumber.Villa_Number);
+            bool roomNumberExists = _context.VillaNumbers.Any(v => v.Villa_Number == villaNumberVM.VillaNumber.Villa_Number);
 
             if (ModelState.IsValid && !roomNumberExists)
             {
 
-                await _context.VillaNumbers.AddAsync(obj.VillaNumber);
+                await _context.VillaNumbers.AddAsync(villaNumberVM.VillaNumber);
                 await _context.SaveChangesAsync();
                 TempData["success"] = "Villa Number has been created successfully";
 
@@ -60,13 +59,13 @@ namespace WhiteLagoon.Web.Controllers
             }
 
             var villas = await _context.Villas.ToListAsync();
-            obj.VillaList = villas.Select(villa => new SelectListItem
+            villaNumberVM.VillaList = villas.Select(villa => new SelectListItem
             {
                 Text = villa.Name,
                 Value = villa.Id.ToString()
             });
 
-            return View(obj);
+            return View(villaNumberVM);
         }
 
         [HttpGet]
@@ -113,33 +112,42 @@ namespace WhiteLagoon.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int villaNumberId)
         {
-            Villa? obj = await _context.Villas.FindAsync(id);
+            var villas = await _context.Villas.ToListAsync();
+            var model = new VillaNumberVM
+            {
+                VillaList = villas.Select(villa => new SelectListItem
+                {
+                    Text = villa.Name,
+                    Value = villa.Id.ToString()
+                }),
+                VillaNumber = await _context.VillaNumbers.FirstOrDefaultAsync(u => u.Villa_Number == villaNumberId)
+            };
 
-            if (obj is null)
+            if (model.VillaNumber is null)
             {
                 return RedirectToAction("Error", "Home");
             }
 
-            return View(obj);
+            return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Delete(Villa obj)
+        public async Task<IActionResult> Delete(VillaNumberVM villaNumberVM)
         {
-            var objFromDb = await _context.Villas.FindAsync(obj.Id);
+            var objFromDb = await _context.VillaNumbers.FindAsync(villaNumberVM.VillaNumber.Villa_Number);
 
             if (objFromDb is not null)
             {
-                _context.Villas.Remove(objFromDb);
+                _context.VillaNumbers.Remove(objFromDb);
                 await _context.SaveChangesAsync();
-                TempData["success"] = "Villa has been deleted successfully";
+                TempData["success"] = "Villa number has been deleted successfully";
                 return RedirectToAction("Index");
             }
 
-            TempData["error"] = "The Villa could not be deleted";
-            return View(obj);
+            TempData["error"] = "The Villa number could not be deleted";
+            return View();
         }
     }
 }
