@@ -42,7 +42,6 @@ namespace WhiteLagoon.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(VillaNumberVM obj)
         {
-
             bool roomNumberExists = _context.VillaNumbers.Any(v => v.Villa_Number == obj.VillaNumber.Villa_Number);
 
             if (ModelState.IsValid && !roomNumberExists)
@@ -50,7 +49,7 @@ namespace WhiteLagoon.Web.Controllers
 
                 await _context.VillaNumbers.AddAsync(obj.VillaNumber);
                 await _context.SaveChangesAsync();
-                TempData["success"] = "Villa has been created successfully";
+                TempData["success"] = "Villa Number has been created successfully";
 
                 return RedirectToAction("Index");
             }
@@ -92,18 +91,25 @@ namespace WhiteLagoon.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Update(Villa obj)
+        public async Task<IActionResult> Update(VillaNumberVM villaNumberVm)
         {
             if (ModelState.IsValid)
             {
-                _context.Villas.Update(obj);
+                _context.VillaNumbers.Update(villaNumberVm.VillaNumber);
                 await _context.SaveChangesAsync();
-                TempData["success"] = "Villa has been updated successfully";
+                TempData["success"] = "Villa Number has been updated successfully";
 
                 return RedirectToAction("Index");
             }
 
-            return View(obj);
+            var villas = await _context.Villas.ToListAsync();
+            villaNumberVm.VillaList = villas.Select(villa => new SelectListItem
+            {
+                Text = villa.Name,
+                Value = villa.Id.ToString()
+            });
+
+            return View(villaNumberVm);
         }
 
         [HttpGet]
