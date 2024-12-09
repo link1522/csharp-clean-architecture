@@ -88,7 +88,7 @@ namespace WhiteLagoon.Web.Controllers
             {
                 _unitOfWork.Amenity.Update(amenityVM.Amenity);
                 _unitOfWork.Save();
-                TempData["success"] = "Villa Number has been updated successfully";
+                TempData["success"] = "Amenity has been updated successfully";
 
                 return RedirectToAction(nameof(Index));
             }
@@ -104,41 +104,41 @@ namespace WhiteLagoon.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult Delete(int villaNumberId)
+        public IActionResult Delete(int amenityId)
         {
             var villas = _unitOfWork.Villa.GetAll();
-            var model = new VillaNumberVM
+            var viewModel = new AmenityVM 
             {
                 VillaList = villas.Select(villa => new SelectListItem
                 {
                     Text = villa.Name,
                     Value = villa.Id.ToString()
                 }),
-                VillaNumber = _unitOfWork.VillaNumber.Get(u => u.Villa_Number == villaNumberId)
+                Amenity = _unitOfWork.Amenity.Get(u => u.Id == amenityId)
             };
 
-            if (model.VillaNumber is null)
+            if (viewModel.Amenity is null)
             {
                 return RedirectToAction("Error", "Home");
             }
 
-            return View(model);
+            return View(viewModel);
         }
 
         [HttpPost]
-        public IActionResult Delete(VillaNumberVM villaNumberVM)
+        public IActionResult Delete(AmenityVM amenityVM)
         {
-            var objFromDb = _unitOfWork.VillaNumber.Get(u => u.Villa_Number == villaNumberVM.VillaNumber.Villa_Number);
+            var objFromDb = _unitOfWork.Amenity.Get(u => u.Id == amenityVM.Amenity.Id);
 
             if (objFromDb is not null)
             {
-                _unitOfWork.VillaNumber.Remove(objFromDb);
+                _unitOfWork.Amenity.Remove(objFromDb);
                 _unitOfWork.Save();
-                TempData["success"] = "Villa number has been deleted successfully";
+                TempData["success"] = "Amenity has been deleted successfully";
                 return RedirectToAction(nameof(Index));
             }
 
-            TempData["error"] = "The Villa number could not be deleted";
+            TempData["error"] = "The Amenity could not be deleted";
             return View();
         }
     }
