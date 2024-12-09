@@ -25,7 +25,7 @@ namespace WhiteLagoon.Web.Controllers
         {
             var villas = _unitOfWork.Villa.GetAll();
 
-            var model = new VillaNumberVM
+            var ViewModel = new AmenityVM
             {
                 VillaList = villas.Select(villa => new SelectListItem
                 {
@@ -34,37 +34,30 @@ namespace WhiteLagoon.Web.Controllers
                 })
             };
 
-            return View(model);
+            return View(ViewModel);
         }
 
         [HttpPost]
-        public IActionResult Create(VillaNumberVM villaNumberVM)
+        public IActionResult Create(AmenityVM amenityVM)
         {
-            bool roomNumberExists = _unitOfWork.VillaNumber.Any(v => v.Villa_Number == villaNumberVM.VillaNumber.Villa_Number);
-
-            if (ModelState.IsValid && !roomNumberExists)
+            if (ModelState.IsValid)
             {
-                _unitOfWork.VillaNumber.Add(villaNumberVM.VillaNumber);
+                _unitOfWork.Amenity.Add(amenityVM.Amenity);
                 _unitOfWork.Save();
 
-                TempData["success"] = "Villa Number has been created successfully";
+                TempData["success"] = "Amenity has been created successfully";
 
                 return RedirectToAction(nameof(Index));
             }
 
-            if (roomNumberExists)
-            {
-                TempData["error"] = "Villa Number already exists!";
-            }
-
             var villas = _unitOfWork.Villa.GetAll();
-            villaNumberVM.VillaList = villas.Select(villa => new SelectListItem
+            amenityVM.VillaList = villas.Select(villa => new SelectListItem
             {
                 Text = villa.Name,
                 Value = villa.Id.ToString()
             });
 
-            return View(villaNumberVM);
+            return View(amenityVM);
         }
 
         [HttpGet]
