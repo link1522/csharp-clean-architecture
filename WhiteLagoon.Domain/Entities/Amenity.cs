@@ -4,11 +4,11 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WhiteLagoon.Domain.Entities
 {
-    public class VillaNumber
+    public class Amenity
     {
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
-        [Display(Name = "Villa Number")]
-        public int Villa_Number { get; set; }
+        public int Id { get; set; }
+        public required string Name { get; set; }
+        public string? Description { get; set; }
 
         [ForeignKey("Villa")]
         [Display(Name = "Villa Id")]
@@ -16,8 +16,5 @@ namespace WhiteLagoon.Domain.Entities
 
         [ValidateNever]
         public Villa? Villa { get; set; }
-
-        [Display(Name = "Special Details")]
-        public string? SpecialDetails { get; set; }
     }
 }
