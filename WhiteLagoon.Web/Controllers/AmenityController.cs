@@ -61,20 +61,20 @@ namespace WhiteLagoon.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult Update(int villaNumberId)
+        public IActionResult Update(int amenityId)
         {
             var villas = _unitOfWork.Villa.GetAll();
-            var model = new VillaNumberVM
+            var model = new AmenityVM
             {
                 VillaList = villas.Select(villa => new SelectListItem
                 {
                     Text = villa.Name,
                     Value = villa.Id.ToString()
                 }),
-                VillaNumber = _unitOfWork.VillaNumber.Get(u => u.Villa_Number == villaNumberId)
+                Amenity = _unitOfWork.Amenity.Get(u => u.Id == amenityId)
             };
 
-            if (model.VillaNumber is null)
+            if (model.Amenity is null)
             {
                 return RedirectToAction("Error", "Home");
             }
@@ -82,11 +82,11 @@ namespace WhiteLagoon.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Update(VillaNumberVM villaNumberVm)
+        public IActionResult Update(AmenityVM amenityVM)
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.VillaNumber.Update(villaNumberVm.VillaNumber);
+                _unitOfWork.Amenity.Update(amenityVM.Amenity);
                 _unitOfWork.Save();
                 TempData["success"] = "Villa Number has been updated successfully";
 
@@ -94,13 +94,13 @@ namespace WhiteLagoon.Web.Controllers
             }
 
             var villas = _unitOfWork.Villa.GetAll();
-            villaNumberVm.VillaList = villas.Select(villa => new SelectListItem
+            amenityVM.VillaList = villas.Select(villa => new SelectListItem
             {
                 Text = villa.Name,
                 Value = villa.Id.ToString()
             });
 
-            return View(villaNumberVm);
+            return View(amenityVM);
         }
 
         [HttpGet]

@@ -4,13 +4,14 @@
     <div class="card-header bg-success bg-gradient m-0 py-3">
         <div class="row">
             <div class="col-12 text-center">
-                <h2 class="text-white py-2">Create Amenity</h2>
+                <h2 class="text-white py-2">Update Amenity</h2>
             </div>
         </div>
     </div>
 
     <div class="card-body border p-4">
-        <form asp-controller="Amenity" asp-action="Create" method="post" class="row">
+        <form asp-controller="Amenity" asp-action="Update" method="post" class="row">
+            <input asp-for="@Model.Amenity.Id" type="hidden" />
             <div class="p-3">
                 @* <div asp-validation-summary="ModelOnly"></div> *@
                 <div class="form-floating py-1 col-12">
