@@ -14,7 +14,7 @@ namespace WhiteLagoon.Web.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public  IActionResult Index()
+        public IActionResult Index()
         {
             var amenities = _unitOfWork.Amenity.GetAll(includeProperties: "Villa");
             return View(amenities);
@@ -107,7 +107,7 @@ namespace WhiteLagoon.Web.Controllers
         public IActionResult Delete(int amenityId)
         {
             var villas = _unitOfWork.Villa.GetAll();
-            var viewModel = new AmenityVM 
+            var viewModel = new AmenityVM
             {
                 VillaList = villas.Select(villa => new SelectListItem
                 {
