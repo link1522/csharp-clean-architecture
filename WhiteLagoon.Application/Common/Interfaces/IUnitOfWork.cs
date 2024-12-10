@@ -6,6 +6,8 @@
         IVillaNumberRepository VillaNumber { get; }
         IAmenityRepository Amenity { get; }
 
+        IUserRepository User { get; }
+
         void Save();
     }
 }

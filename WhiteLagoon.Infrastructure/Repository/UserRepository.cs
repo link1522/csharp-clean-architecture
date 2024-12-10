@@ -4,7 +4,7 @@ using WhiteLagoon.Infrastructure.Data;
 
 namespace WhiteLagoon.Infrastructure.Repository
 {
-    class UserRepository : Repository<User>, IUserRepository
+    public class UserRepository : Repository<User>, IUserRepository
     {
 
         private readonly ApplicationDbContext _context;

@@ -5,12 +5,12 @@ namespace WhiteLagoon.Application.Common.Services
 {
     public class UserService
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IPasswordHasher _passwordHasher;
 
-        public UserService(IUserRepository userRepository, IPasswordHasher passwordHasher)
+        public UserService(IUnitOfWork unitOfWork, IPasswordHasher passwordHasher)
         {
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
             _passwordHasher = passwordHasher;
         }
 
@@ -30,7 +30,9 @@ namespace WhiteLagoon.Application.Common.Services
                 throw new ArgumentException("Invalid user data");
             }
 
-            _userRepository.Add(user);
+            _unitOfWork.User.Add(user);
+            _unitOfWork.Save();
+
             return user;
         }
 
@@ -43,7 +45,7 @@ namespace WhiteLagoon.Application.Common.Services
 
         public UserSession AuthenticateUser(string email, string password)
         {
-            var user = _userRepository.Get(u => u.Email == email);
+            var user = _unitOfWork.User.Get(u => u.Email == email);
 
             if (user is null || !user.VerifyPassword(password))
             {
