@@ -11,6 +11,7 @@
 
     <div class="card-body border p-4">
         <form asp-controller="Auth" asp-action="Login" method="post" class="row">
+            <input asp-for="ReturnUrl" type="hidden" value="@ViewData["ReturnUrl"]" />
             <div>
                 <div class="form-floating py-1 col-12">
                     <input asp-for="Email" class="form-control" />

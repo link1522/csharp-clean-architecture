@@ -43,21 +43,16 @@ namespace WhiteLagoon.Application.Common.Services
                    !string.IsNullOrEmpty(user.PasswordHash);
         }
 
-        public UserSession AuthenticateUser(string email, string password)
+        public bool AuthenticateUser(string email, string password)
         {
             var user = _unitOfWork.User.Get(u => u.Email == email);
 
             if (user is null || !user.VerifyPassword(password))
             {
-                throw new UnauthorizedAccessException("Invalid email or password");
+                return false;
             }
 
-            return new UserSession
-            {
-                Token = Guid.NewGuid().ToString(),
-                UserId = user.Id,
-                ExpiresAt = DateTime.UtcNow.AddHours(1)
-            };
+            return true;
         }
     }
 }

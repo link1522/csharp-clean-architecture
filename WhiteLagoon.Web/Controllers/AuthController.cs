@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using WhiteLagoon.Application.Common.Services;
 using WhiteLagoon.Web.ViewModels;
 
@@ -35,18 +37,46 @@ namespace WhiteLagoon.Web.Controllers
             }
         }
 
-        public IActionResult Login()
+        public IActionResult Login(string ReturnUrl)
         {
+            ViewData["ReturnUrl"] = ReturnUrl;
             return View();
         }
 
         [HttpPost]
-        public IActionResult Login(LoginVM loginVM)
+        public async Task<IActionResult> Login(LoginVM loginVM)
         {
             try
             {
-                var session = _userService.AuthenticateUser(loginVM.Email, loginVM.Password);
+                var authenticated = _userService.AuthenticateUser(loginVM.Email, loginVM.Password);
 
+                if (!authenticated)
+                {
+                    TempData["error"] = "Invalid email or password";
+                    return View(loginVM);
+                }
+
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, loginVM.Email),
+                    new Claim(ClaimTypes.Role, "User")
+                };
+
+                var claimsIdentity = new ClaimsIdentity(claims, "cookieAuth");
+                var authProperties = new AuthenticationProperties
+                {
+                    IsPersistent = true,
+                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30)
+                };
+
+                await HttpContext.SignInAsync("cookieAuth", new ClaimsPrincipal(claimsIdentity), authProperties);
+
+                TempData["success"] = "User has been logged in successfully";
+
+                if (Url.IsLocalUrl(loginVM.ReturnUrl))
+                {
+                    return Redirect(loginVM.ReturnUrl);
+                } 
                 return RedirectToAction("Index", "Home");
             }
             catch (Exception ex)
@@ -55,6 +85,13 @@ namespace WhiteLagoon.Web.Controllers
                 loginVM.Password = "";
                 return View(loginVM);
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync("cookieAuth");
+            return RedirectToAction("Index", "Home");
         }
     }
 }
